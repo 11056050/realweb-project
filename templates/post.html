@@ -2,12 +2,12 @@
 {% load markdown_extras %}
 
 {% block title %}
-    {{ book.booktitle }} - word hell
+    {{ book.booktitle }} - Word Hell
 {% endblock title %}
 
 {% block headmessage %}
-    <h3 style='font-family:微軟正黑體;'>{{ book.booktitle }}</h3>
-    <a style='font-family:微軟正黑體;' href='/'>Home</a>
+    <h3 style="font-family:微軟正黑體;">{{ book.booktitle }}</h3>
+    <a style="font-family:微軟正黑體;" href="/">Home</a>
 {% endblock headmessage %}
 
 {% block content %}
@@ -23,9 +23,17 @@
                 <strong><a href="{% url 'writer_post' writer_id=book.creator.id %}">Writer Post</a></strong>
             </p>
             <p style="font-family:微軟正黑體; font-size:10pt; letter-spacing:2pt;">
-                <strong>{{ book.release| convert_markdown | safe }}</strong>
+                <strong><a href="{% url 'chapter_detail' book_id=book.id chapter_id=1 %}">Select a Chapter to Read</a></strong>
+            </p>
+            <form action="{% url 'rent_book' book.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" style="font-family:微軟正黑體; font-size:10pt;">Rented</button>
+            </form>
+            
+            <p style="font-family:微軟正黑體; font-size:10pt;">
+                <strong>{{ book.release | convert_markdown | safe }}</strong>
             </p>
         </div>
     </div>
-    <div style="clear: both;"></div> 
+    <div style="clear: both;"></div>fgrrvtgtvhg
 {% endblock content %}

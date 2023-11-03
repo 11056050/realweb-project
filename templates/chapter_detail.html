@@ -1,0 +1,19 @@
+{% extends "base2.html" %}
+{% load markdown_extras static %}
+
+{% block headmessage %}
+    <h3 style='font-family:微軟正黑體;'>Word hell</h3>
+    <a style='font-family:微軟正黑體;' href='/'>Home</a>
+{% endblock headmessage %}
+
+{% block content %}
+    <div class="book-details">
+        <div class="text-details" style="float: left;">
+            <p style="font-family:微軟正黑體; font-size:14pt; letter-spacing:2pt;">
+                {{ chapter.story }} 
+            </p>
+        
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+{% endblock content %}

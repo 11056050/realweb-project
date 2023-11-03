@@ -37,3 +37,13 @@ class Book(models.Model):
 
     def __str__(self):
         return self.booktitle
+
+class Chapter(models.Model):
+    book = models.ForeignKey('Book', on_delete=models.CASCADE, related_name='book_chapters')
+    ctitle = models.CharField(max_length=200)
+    title = models.CharField(max_length=255)
+    story = models.TextField()
+    chapter_number = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.title

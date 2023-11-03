@@ -1,5 +1,5 @@
 from django.contrib import admin
-from realsite.models import Book
+from realsite.models import Book,Chapter
 from realsite.models import Writer
 
 class BookAdmin(admin.ModelAdmin):
@@ -12,3 +12,4 @@ class WriterAdmin(admin.ModelAdmin):
 admin.site.register(Writer, WriterAdmin)
 
 admin.site.register(Book, BookAdmin)
+admin.site.register(Chapter)

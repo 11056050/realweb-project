@@ -7,6 +7,44 @@ from django.db.models import Q
 from .forms import BookForm
 from django.shortcuts import render, get_object_or_404
 from .models import Writer
+from .models import Chapter
+
+def rent_book(request, book_id):
+    if request.user.is_authenticated:
+        book = get_object_or_404(Book, id=book_id)
+        book.rented_by = request.user
+        book.save()
+        
+        return HttpResponse("Book has been marked as rented.")
+    else:
+        return HttpResponse("You must be logged in to mark a book as rented.")
+
+def rent_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    
+    button_value = request.POST.get('action')
+
+    if button_value == 'rented':
+        book.status = 'Rented'
+    elif button_value == 'not_rented':
+        book.status = 'Not Rented'
+
+    book.save()
+
+    return HttpResponse("Book status updated.")
+
+def chapter_detail(request, book_id, chapter_id):
+    chapter = get_object_or_404(Chapter, book_id=book_id, chapter_number=chapter_id)
+    return render(request, 'chapter_detail.html', {'chapter': chapter})
+
+def book_list(request, book_id):
+    books = Book.objects.all()
+    return render(request, 'book_list.html', {'books': books})
+
+def book_detail(request, book_id):
+    book = Book.objects.get(pk=book_id)
+    chapters = Chapter.objects.filter(book=book)
+    return render(request, 'book_detail.html', {'book': book, 'chapters': chapters})
 
 def writer_post(request, writer_id):
     writer = get_object_or_404(Writer, pk=writer_id)
