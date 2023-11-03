@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Writer(models.Model):
+    creatorname = models.CharField(max_length=200,default='Name')
     GENDER_CHOICES = [
         ('Male', 'Male'),
         ('Female', 'Female'),

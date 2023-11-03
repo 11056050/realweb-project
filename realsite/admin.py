@@ -7,7 +7,7 @@ class BookAdmin(admin.ModelAdmin):
 
 
 class WriterAdmin(admin.ModelAdmin):
-    list_display = ('image', 'age', 'gender', 'born_date')
+    list_display = ('image', 'age', 'gender', 'born_date', 'creatorname')
 
 admin.site.register(Writer, WriterAdmin)
 
