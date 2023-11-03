@@ -1,0 +1,28 @@
+{% extends "base2.html" %}
+{% load markdown_extras static %}
+
+{% block title %}
+    {{ writer.age }}-year-old {{ writer.gender }} Writer - word hell
+{% endblock title %}
+
+{% block headmessage %}
+    <h3 style='font-family:微軟正黑體;'>{{ writer.age }}-year-old {{ writer.gender }} Writer</h3>
+    <a style='font-family:微軟正黑體;' href='/'>Home</a>
+{% endblock headmessage %}
+
+{% block content %}
+    <div class="book-details">
+        <div class="picture-box">
+            <img src="{{ writer.image.url }}" alt="{{ writer.gender }} Writer" style="max-width: 100%; max-height: 200px; float: left; margin-right: 20px;" />
+        </div>
+        <div class="text-details" style="float: left;">
+            <p style="font-family:微軟正黑體; font-size:14pt; letter-spacing:2pt;">
+                {{ writer.gender }} writer born on {{ writer.born_date | date:"Y M d" }}.
+            </p>
+            <p style="font-family:微軟正黑體; font-size:10pt; letter-spacing:2pt;">
+                <strong>{{ writer.age }} years old</strong>
+            </p>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+{% endblock content %}

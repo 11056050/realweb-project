@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% extends "base2.html" %}
+{% block title %}Welcome to word hell{% endblock title %}
+{% block headmessage %}<h3 style="font-family:標楷體;"> Books</h3>{% endblock headmessage %}
+{% block content %}
+
+<div class='card-footer' style='background-color:#FFFFFF'></div>
+
+{% for book in posts %}
+<div class='card'>
+    <div class='card-header'>
+        <p style="font-family:微軟正黑體; font-size:14pt; font-weight:bold;">
+            <a href="/book/{{ book.booktitle }}">{{ book.booktitle }}</a>
+        </p>
+    </div>
+    <div class='card-body' style="background-color:#979797">
+        <div class="book-image">
+            <img src="{{ book.picture.url }}" alt="{{ book.booktitle }}" style="max-width: 100%; max-height: 200px;" />
+        </div>
+        <p>
+          
+        </p>
+    </div>
+    <div class='card-footer' style='background-color:#FFFFFF'></div>
+    <p>
+        Booked: {{ book.pub_date | date:"Y M d, h:i:s" }}
+    </p>
+
+</div>
+<br>
+{% endfor %}
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% load static %}
+{% include 'search_form.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Your other head elements here -->
+    <style>
+        body {
+            margin: 0; /* Remove the default margin */
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url("{% static 'images/grass-border-vector-illustration_433751-81.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        h1 {
+            font-family: 微軟正黑體;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to word hell</h1>
+</body>
+</html>

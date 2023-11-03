@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Form</title>
+</head>
+<body>
+    <form method="get" action="{% url 'search_posts' %}">
+        <input type="text" name="search_query" placeholder="Search..." />
+        <button type="submit">Search</button>
+    </form>
+</body>
+</html>
