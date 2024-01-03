@@ -12,7 +12,12 @@ urlpatterns = [
     path('search/', mv.search_posts, name='search_posts'), 
     path('writer/<int:writer_id>/', views.writer_post, name='writer_post'),
     path('book/<int:book_id>/chapter/<int:chapter_id>/', mv.chapter_detail, name='chapter_detail'),
-    path('book/<int:book_id>/rent/', mv.rent_book, name='rent_book'),
+    path('book/<int:book_id>/rent/', mv.rent_or_return_book, name='rent_book'),
+    path('book/<int:book_id>/edit_comment/', mv.edit_comment, name='edit_comment'),
+    path('register/', views.register, name='register'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
 ]
 
 if settings.DEBUG:

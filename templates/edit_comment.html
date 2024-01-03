@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Comment</h2>
+<form method="post">
+    {% csrf_token %}
+    <textarea name="new_comment">{{ book.comments }}</textarea>
+    <input type="submit" value="Update Comment">
+</form>
+{% endblock %}
