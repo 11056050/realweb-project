@@ -1,9 +1,35 @@
-{% extends "base.html" %}
+{% extends "post.html" %}
+
 {% block content %}
 <h2>Rent or Return Book</h2>
-<form method="post">
+<form id="rent-return-form" action="{% url 'rent_or_return_book' book.id %}" method="post">
     {% csrf_token %}
-    <input type="submit" name="action" value="rent">
-    <input type="submit" name="action" value="return">
+    <button type="submit" name="action" value="rent">Rent Book</button>
+    <button type="submit" name="action" value="return">Return Book</button>
 </form>
+
+<p id="result-message"></p>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('rent-return-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result-message').textContent = data.message;
+                // Update any other elements on the page as necessary
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
 {% endblock %}

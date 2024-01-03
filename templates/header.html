@@ -22,6 +22,9 @@
     </style>
 </head>
 <body>
-    <h1>11056050 陳一吉，11056048</h1>
+    <h1>11056050 陳一吉</h1>
+    {% if request.user.is_authenticated %}
+        <p>Welcome, {{ request.user.username }}</p>
+    {% endif %}
 </body>
 </html>

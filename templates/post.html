@@ -25,15 +25,43 @@
             <p style="font-family:微軟正黑體; font-size:10pt; letter-spacing:2pt;">
                 <strong><a href="{% url 'chapter_detail' book_id=book.id chapter_id=1 %}">Select a Chapter to Read</a></strong>
             </p>
-            <form action="{% url 'rent_book' book.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" style="font-family:微軟正黑體; font-size:10pt;">Rented</button>
-            </form>
-            
-            <p style="font-family:微軟正黑體; font-size:10pt;">
-                <strong>{{ book.release | convert_markdown | safe }}</strong>
-            </p>
-        </div>
-    </div>
-    <div style="clear: both;"></div>
-{% endblock content %}
+
+            <div>
+                {% if book.available_copies > 0 %}
+                    <form id="rent-form" action="{% url 'rent_book' book.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="rent">
+                        <button type="submit">Rent Book</button>
+                    </form>
+                {% endif %}
+                <form id="return-form" action="{% url 'rent_book' book.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="return">
+                    <button type="submit">Return Book</button>
+                </form>
+                <p id="available-copies">Available Copies: {{ book.available_copies }}</p>
+            </div>
+        
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.book-action-form').forEach(form => {
+                        form.addEventListener('submit', function(event) {
+                            event.preventDefault();
+                            var formData = new FormData(form);
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-CSRFToken': '{{ csrf_token }}'
+                                },
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                alert(data.message); 
+                                document.getElementById('available-copies').textContent = 'Available Copies: ' + data.available_copies;
+                            });
+                        });
+                    });
+                });
+            </script>
+        {% endblock content %}

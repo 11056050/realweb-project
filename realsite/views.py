@@ -9,6 +9,7 @@ from django.db.models import Q
 from .models import Writer, Chapter, UserProfile
 from datetime import datetime
 from django.contrib.auth import logout
+from django.http import JsonResponse
 
 def user_logout(request):
     logout(request)
@@ -19,6 +20,8 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            
+            UserProfile.objects.create(user=user)
             login(request, user)
             return redirect('homepage')
     else:
@@ -46,26 +49,23 @@ def rent_or_return_book(request, book_id):
     if request.method == 'POST':
         action = request.POST.get('action')
 
-        if action == 'rent':
-            if book.status == 'Not Rented':
-                book.status = 'Rented'
-                book.rented_by.add(request.user)
-                book.save()
-                return HttpResponse("Book has been rented.")
-            else:
-                return HttpResponse("This book is already rented.")
-        elif action == 'return':
-            if book.status == 'Rented' and request.user in book.rented_by.all():
-                book.status = 'Not Rented'
-                book.rented_by.remove(request.user)
-                book.save()
-                return HttpResponse("Book has been returned.")
-            else:
-                return HttpResponse("You can't return this book as it's not rented by you.")
-        else:
-            return HttpResponse("Invalid action.")
+        if action == 'rent' and book.available_copies > 0:
+            book.available_copies -= 1
+            book.rented_by.add(request.user)
+            book.save()
+
+        elif action == 'return' and request.user in book.rented_by.all():
+            book.available_copies += 1
+            book.rented_by.remove(request.user)
+            book.save()
+
+        # Redirect to the homepage after processing the POST request
+        return redirect('homepage')
+
     else:
+        # Render the form page if it's not a POST request
         return render(request, 'rent_return_book.html', {'book': book})
+
 
 @login_required
 def edit_comment(request, book_id):
@@ -82,17 +82,21 @@ def edit_comment(request, book_id):
 @login_required
 def rent_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
-    
-    button_value = request.POST.get('action')
 
-    if button_value == 'rented':
-        book.status = 'Rented'
-    elif button_value == 'not_rented':
-        book.status = 'Not Rented'
+    if request.method == 'POST':
+        action = request.POST.get('action')
 
-    book.save()
+        if action == 'rent' and book.available_copies > 0:
+            book.available_copies -= 1  
+            book.rented_by.add(request.user)  
+            book.save()
 
-    return HttpResponse("Book status updated.")
+    return redirect('homepage')
+
+def book_detail(request, book_id):
+    book = get_object_or_404(Book, pk=book_id)
+    renters = book.rented_by.all()  
+    return render(request, 'book_detail.html', {'book': book, 'renters': renters})
 
 def chapter_detail(request, book_id, chapter_id):
     chapter = get_object_or_404(Chapter, book_id=book_id, chapter_number=chapter_id)
@@ -133,10 +137,10 @@ def search_posts(request):
 
 @login_required
 def edit_profile(request):
-    # Debugging 
-    ###print("Current user:", request.user.username)###
-
-    user_profile = get_object_or_404(UserProfile, user=request.user)
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        user_profile = UserProfile.objects.create(user=request.user)
 
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=user_profile)
@@ -147,6 +151,16 @@ def edit_profile(request):
         form = UserProfileForm(instance=user_profile)
 
     return render(request, 'edit_profile.html', {'form': form})
+
+@login_required
+def profile_view(request):
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+
+    context = {
+        'user': request.user,
+        'user_profile': user_profile
+    }
+    return render(request, 'profile.html', context)
 
 
 @login_required

@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rented_books = models.ManyToManyField('Book', blank=True, related_name='rented_by')
+    rented_books = models.ManyToManyField('Book', blank=True, related_name='user_rented_books')
     bio = models.TextField(blank=True)  
 
     def __str__(self):
         return self.user.username
-    
+
     
 class Writer(models.Model):
     creatorname = models.CharField(max_length=200, default='Name')
@@ -41,7 +41,14 @@ class Book(models.Model):
     creator = models.ForeignKey(Writer, on_delete=models.CASCADE)
     release = models.TextField()
     pub_date = models.DateTimeField(auto_now_add=True)
-
+    available_copies = models.IntegerField(default=0)
+    rented_by = models.ManyToManyField(User, related_name='rented_books', blank=True)
+    STATUS_CHOICES = [
+        ('Not Rented', 'Not Rented'),
+        ('Rented', 'Rented'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Not Rented')
+    
     class Meta:
         ordering = ('-pub_date', )
 

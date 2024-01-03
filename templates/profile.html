@@ -1,0 +1,30 @@
+{% extends "post.html" %} <!-- Replace with your base layout template -->
+
+{% block content %}
+<div class="profile-container">
+    <h1>User Profile</h1>
+    <div class="user-info">
+        <h2>Username: {{ user.username }}</h2>
+        <h3>Email: {{ user.email }}</h3>
+    </div>
+
+    <div class="profile-info">
+        <h3>Profile Information</h3>
+        <p>Bio: {{ user_profile.bio }}</p>
+        <!-- Add more shit in the future (maybe) -->
+    </div>
+
+     
+    <div class="rented-books">
+        <h3>Rented Books:</h3>
+        <ul>
+            {% for book in user_profile.rented_books.all %}
+                <li>{{ book.booktitle }}</li> 
+            {% empty %}
+                <li>No books rented.</li>
+            {% endfor %}
+        </ul>
+    </div> 
+    
+</div>
+{% endblock %}
