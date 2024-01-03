@@ -133,6 +133,9 @@ def search_posts(request):
 
 @login_required
 def edit_profile(request):
+    # Debugging 
+    ###print("Current user:", request.user.username)###
+
     user_profile = get_object_or_404(UserProfile, user=request.user)
 
     if request.method == 'POST':
@@ -144,6 +147,7 @@ def edit_profile(request):
         form = UserProfileForm(instance=user_profile)
 
     return render(request, 'edit_profile.html', {'form': form})
+
 
 @login_required
 def profile(request):
