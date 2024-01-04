@@ -31,11 +31,12 @@
                             <a href="/" class="list-group-item">HOME</a>
                             <a href="https://google.com/news" class="list-group-item">Google news</a> 
                             <a href="https://www.youtube.com" class="list-group-item">Youtube</a>     
-                            <a href="https://twitter.com/?lang=zh-Hant" class="list-group-item">Twitter</a>
-                            <a href="https://zh-tw.facebook.com/" class="list-group-item">Facebook</a>
+                            <a href="{% url 'edit_user_added_books' %}" class="list-group-item">Edit Book</a>
+                            <a href="{% url 'release_book' %}" class="list-group-item">release book</a>
                             <a href="{% url 'register' %}" class="list-group-item">Register</a>
                             <a href="{% url 'login' %}" class="list-group-item">Login</a>
                             <a href="{% url 'edit_profile' %}" class="list-group-item">edit</a>
+                            <a href="{% url 'renting_history' %}" class="list-group-item">Renting</a>
                         </div>
                         
                     </div>

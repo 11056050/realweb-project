@@ -1,0 +1,12 @@
+{% extends 'post.html' %}
+
+{% block content %}
+  <h1>Your Released Books</h1>
+  <ul>
+    {% for book in released_books %}
+      <li>
+        <a href="{% url 'edit_book' book_id=book.id %}">{{ book.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

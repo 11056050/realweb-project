@@ -13,13 +13,17 @@ urlpatterns = [
     path('writer/<int:writer_id>/', views.writer_post, name='writer_post'),
     path('book/<int:book_id>/chapter/<int:chapter_id>/', mv.chapter_detail, name='chapter_detail'),
     path('book/<int:book_id>/rent/', mv.rent_or_return_book, name='rent_book'),
-    path('book/<int:book_id>/edit_comment/', mv.edit_comment, name='edit_comment'),
+    path('book/<int:book_id>/edit_comment/<int:comment_id>/', views.edit_comment, name='edit_comment'),
     path('register/', views.register, name='register'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('profile/', views.profile_view, name='profile'),
     path('', views.homepage, name='homepage'),
+    path('renting_history/', views.renting_history, name='renting_history'),
+    path('release_book/', views.release_book, name='release_book'),
+    path('edit_user_added_books/', views.edit_user_added_books, name='edit_user_added_books'),
+    path('edit_book/<int:book_id>/', views.edit_book, name='edit_book')
 ]
 
 if settings.DEBUG:

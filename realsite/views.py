@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from realsite.models import Book
+from realsite.models import Book,Comment
 from django.contrib.auth.decorators import login_required
-from .forms import BookForm, RegistrationForm, PostSearchForm, UserProfileForm
+from .forms import BookForm, RegistrationForm, PostSearchForm, UserProfileForm,BookReleaseForm,CommentForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Q
@@ -10,6 +10,59 @@ from .models import Writer, Chapter, UserProfile
 from datetime import datetime
 from django.contrib.auth import logout
 from django.http import JsonResponse
+
+def edit_user_added_books(request):
+  
+    user = request.user
+    
+    user_added_books = Book.objects.filter(added_by=user)
+    
+    if request.method == 'POST':
+      
+        form = BookForm(request.POST)
+        if form.is_valid():
+           
+            book_id = form.cleaned_data['book_id']
+            book = Book.objects.get(id=book_id)
+            if book.added_by == user:
+                
+                book.title = form.cleaned_data['title']
+                book.author = form.cleaned_data['author']
+                book.description = form.cleaned_data['description']
+                book.save()
+                
+                return redirect('edit_user_added_books')
+    else:
+        form = BookForm()
+    
+    context = {
+        'user_added_books': user_added_books,
+        'form': form,
+    }
+    
+    return render(request, 'edit_user_added_books.html', context)
+
+def edit_comment(request, book_id, comment_id):
+    book = get_object_or_404(Book, id=book_id)
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('book_detail', book_id=book.id)
+    else:
+        form = CommentForm(instance=comment)
+
+    return render(request, 'edit_comment.html', {'form': form, 'book': book, 'comment': comment})
+
+
+def renting_history(request):
+ 
+    rented_books = Book.objects.filter(rented_by=request.user)
+
+   
+    return render(request, 'renting_history.html', {'rented_books': rented_books})
 
 def user_logout(request):
     logout(request)
@@ -28,19 +81,16 @@ def register(request):
         form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
 
-def user_login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('homepage')
+def edit_user_added_books(request):
+   
+    user_added_books = Book.objects.filter(added_by=request.user)
+    
+    if user_added_books.exists():
+       
+        return render(request, 'edit_user_added_books.html', {'user_added_books': user_added_books})
     else:
-        form = AuthenticationForm()
-    return render(request, 'registration/login.html', {'form': form})
+       
+        return redirect('release_book') 
 
 @login_required
 def rent_or_return_book(request, book_id):
@@ -59,25 +109,13 @@ def rent_or_return_book(request, book_id):
             book.rented_by.remove(request.user)
             book.save()
 
-        # Redirect to the homepage after processing the POST request
+       
         return redirect('homepage')
 
     else:
-        # Render the form page if it's not a POST request
+        
         return render(request, 'rent_return_book.html', {'book': book})
 
-
-@login_required
-def edit_comment(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
-
-    if request.method == 'POST':
-        new_comment = request.POST.get('new_comment')
-        book.comments = new_comment  # Update the book's comments field
-        book.save()
-        return HttpResponse("Comment has been updated.")
-    else:
-        return render(request, 'edit_comment.html', {'book': book})
 
 @login_required
 def rent_book(request, book_id):
@@ -115,15 +153,6 @@ def writer_post(request, writer_id):
     writer = get_object_or_404(Writer, pk=writer_id)
     return render(request, 'writer_post.html', {'writer': writer})
 
-def create_book(request):
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('book_list')
-    else:
-        form = BookForm()
-    return render(request, 'create_book.html', {'form': form})
 
 def search_posts(request):
     form = PostSearchForm(request.GET)
@@ -182,3 +211,47 @@ def showbook(request, book_name=None):
             return redirect("/")
     else:
         return render(request, 'general_book.html')
+
+@login_required
+def release_book(request):
+    if request.method == 'POST':
+        form = BookReleaseForm(request.POST, request.FILES)
+        if form.is_valid():
+            book = form.save(commit=False)
+            book.released_by = request.user
+            book.save()
+            return redirect('book_list')  
+    else:
+        form = BookReleaseForm()
+
+    return render(request, 'createbook.html', {'form': form})
+
+@login_required
+def edit_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    if request.user == book.released_by:
+        if request.method == 'POST':
+            form = BookReleaseForm(request.POST, request.FILES, instance=book)
+            if form.is_valid():
+                form.save()
+                return redirect('book_list') 
+        else:
+            form = BookReleaseForm(instance=book)
+
+        return render(request, 'edit_book.html', {'form': form, 'book': book})
+    else:
+        return redirect('book_list')
+
+def user_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('homepage') 
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})

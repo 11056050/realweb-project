@@ -1,0 +1,29 @@
+{% extends "post.html" %}
+
+{% block content %}
+  <h2>Release a New Book</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {{ form.booktitle.label_tag }}
+    {{ form.booktitle }}
+    
+    {{ form.picture.label_tag }}
+    {{ form.picture }}
+    
+    {{ form.info.label_tag }}
+    {{ form.info }}
+    
+    {{ form.creator.label_tag }}
+    {{ form.creator }}
+    
+    {{ form.release.label_tag }}
+    {{ form.release }}
+    
+    {{ form.available_copies.label_tag }}
+    {{ form.available_copies }}
+    
+    <button type="submit">Release Book</button>
+  </form>
+  <a href="{% url 'homepage' %}">Back to Book List</a>
+{% endblock %}

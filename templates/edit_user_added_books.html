@@ -1,0 +1,16 @@
+{% extends 'post.html' %}
+
+{% block content %}
+  <h2>Your Added Books</h2>
+  {% if user_added_books %}
+    <ul>
+      {% for book in user_added_books %}
+        <li>
+          <a href="{% url 'edit_book' book.id %}">{{ book.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You haven't added any books yet. <a href="{% url 'release_book' %}">Add a book</a>.</p>
+  {% endif %}
+{% endblock %}

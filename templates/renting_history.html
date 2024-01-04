@@ -1,0 +1,14 @@
+{% extends "post.html" %}
+
+{% block title %}
+    Renting Books
+{% endblock title %}
+
+{% block content %}
+    <h2>Renting Books</h2>
+    <ul>
+        {% for book in rented_books %}
+            <li>{{ book.booktitle }} - {{ book.release }}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

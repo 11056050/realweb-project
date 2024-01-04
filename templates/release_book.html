@@ -1,0 +1,11 @@
+{% extends "post.html" %}
+
+{% block content %}
+  <h2>Release a New Book</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Release Book</button>
+  </form>
+  <a href="{% url 'book_list' %}">Back to Book List</a>
+{% endblock %}
