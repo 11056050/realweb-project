@@ -23,7 +23,6 @@ urlpatterns = [
     path('renting_history/', views.renting_history, name='renting_history'),
     path('release_book/', views.release_book, name='release_book'),
     path('edit_user_added_books/', views.edit_user_added_books, name='edit_user_added_books'),
-    path('edit_book/<int:book_id>/', views.edit_book, name='edit_book')
 ]
 
 if settings.DEBUG:

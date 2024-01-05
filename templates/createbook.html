@@ -5,6 +5,9 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     
+    {{ form.creator.label_tag }}
+    {{ form.creator }}
+    
     {{ form.booktitle.label_tag }}
     {{ form.booktitle }}
     
@@ -14,14 +17,14 @@
     {{ form.info.label_tag }}
     {{ form.info }}
     
-    {{ form.creator.label_tag }}
-    {{ form.creator }}
-    
     {{ form.release.label_tag }}
     {{ form.release }}
     
     {{ form.available_copies.label_tag }}
     {{ form.available_copies }}
+
+    {{ form.status.label_tag }}
+    {{ form.status }}
     
     <button type="submit">Release Book</button>
   </form>

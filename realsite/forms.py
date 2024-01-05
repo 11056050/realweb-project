@@ -5,6 +5,11 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 from .models import Comment
 
+class BookEditForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ['booktitle', 'info', 'available_copies', 'status']
+
 
 class CommentForm(forms.ModelForm):
     class Meta:

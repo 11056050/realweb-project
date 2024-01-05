@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
 from realsite.models import Book,Comment
 from django.contrib.auth.decorators import login_required
 from .forms import BookForm, RegistrationForm, PostSearchForm, UserProfileForm,BookReleaseForm,CommentForm
@@ -9,38 +8,40 @@ from django.db.models import Q
 from .models import Writer, Chapter, UserProfile
 from datetime import datetime
 from django.contrib.auth import logout
-from django.http import JsonResponse
+from .forms import BookEditForm  
 
+@login_required
 def edit_user_added_books(request):
-  
     user = request.user
-    
     user_added_books = Book.objects.filter(added_by=user)
-    
+
     if request.method == 'POST':
-      
-        form = BookForm(request.POST)
-        if form.is_valid():
-           
-            book_id = form.cleaned_data['book_id']
-            book = Book.objects.get(id=book_id)
-            if book.added_by == user:
-                
-                book.title = form.cleaned_data['title']
-                book.author = form.cleaned_data['author']
-                book.description = form.cleaned_data['description']
-                book.save()
-                
+        book_id = request.POST.get('book_id')
+        try:
+            book = Book.objects.get(id=book_id, added_by=user)
+        except Book.DoesNotExist:
+            print(f"Book with ID {book_id} does not exist or doesn't belong to the current user.")
+            pass
+
+        if book:
+            book_form = BookEditForm(request.POST, instance=book)
+            if book_form.is_valid():
+              
+                book_form.save()
                 return redirect('edit_user_added_books')
     else:
-        form = BookForm()
-    
+       
+        book_form = BookEditForm()
+
     context = {
         'user_added_books': user_added_books,
-        'form': form,
+        'book_form': book_form,
     }
-    
+
     return render(request, 'edit_user_added_books.html', context)
+
+
+
 
 def edit_comment(request, book_id, comment_id):
     book = get_object_or_404(Book, id=book_id)
@@ -81,16 +82,7 @@ def register(request):
         form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
 
-def edit_user_added_books(request):
-   
-    user_added_books = Book.objects.filter(added_by=request.user)
-    
-    if user_added_books.exists():
-       
-        return render(request, 'edit_user_added_books.html', {'user_added_books': user_added_books})
-    else:
-       
-        return redirect('release_book') 
+
 
 @login_required
 def rent_or_return_book(request, book_id):
@@ -220,27 +212,12 @@ def release_book(request):
             book = form.save(commit=False)
             book.released_by = request.user
             book.save()
-            return redirect('book_list')  
+            return redirect('homepage')  
     else:
         form = BookReleaseForm()
 
     return render(request, 'createbook.html', {'form': form})
 
-@login_required
-def edit_book(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
-    if request.user == book.released_by:
-        if request.method == 'POST':
-            form = BookReleaseForm(request.POST, request.FILES, instance=book)
-            if form.is_valid():
-                form.save()
-                return redirect('book_list') 
-        else:
-            form = BookReleaseForm(instance=book)
-
-        return render(request, 'edit_book.html', {'form': form, 'book': book})
-    else:
-        return redirect('book_list')
 
 def user_login(request):
     if request.method == 'POST':

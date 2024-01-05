@@ -1,16 +1,33 @@
-{% extends 'post.html' %}
+{% extends "post.html" %}
 
 {% block content %}
-  <h2>Your Added Books</h2>
-  {% if user_added_books %}
-    <ul>
-      {% for book in user_added_books %}
-        <li>
-          <a href="{% url 'edit_book' book.id %}">{{ book.title }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>You haven't added any books yet. <a href="{% url 'release_book' %}">Add a book</a>.</p>
-  {% endif %}
+  <h2>Edit User Added Books</h2>
+  <form method="post">
+    {% csrf_token %}
+    
+    {% for book in user_added_books %}
+      <div class="book-entry">
+        {{ book.title }} by {{ book.author }}
+        <input type="hidden" name="book_id" value="{{ book.id }}">
+        
+        <label for="id_booktitle">Title:</label>
+        <input type="text" name="booktitle" value="{% if book_form.booktitle.value %}{{ book_form.booktitle.value }}{% else %}{{ book.booktitle }}{% endif %}">
+        
+        <label for="id_info">info:</label>
+        <textarea name="info">{% if book_form.info.value %}{{ book_form.info.value }}{% else %}{{ book.info }}{% endif %}</textarea>
+
+        <label for="id_available_copies">Number Left:</label>
+        <input type="number" name="available_copies" value="{% if book_form.available_copies.value %}{{ book_form.available_copies.value }}{% else %}{{ book.available_copies }}{% endif %}">
+        
+        <label for="id_status">Status:</label>
+        <select name="status">
+          <option value="Not Rented" {% if book_form.status.value == "Not Rented" %}selected{% endif %}>Not Rented</option>
+          <option value="Rented" {% if book_form.status.value == "Rented" %}selected{% endif %}>Rented</option>
+        </select>
+        
+        <button type="submit">Save Changes</button>
+      </div>
+    {% endfor %}
+  </form>
+  <a href="{% url 'homepage' %}">Home</a>
 {% endblock %}
