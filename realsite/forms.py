@@ -25,7 +25,7 @@ class CommentForm(forms.ModelForm):
 class BookReleaseForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ['booktitle', 'picture', 'info', 'creator', 'release', 'available_copies', 'rented_by', 'status']
+        fields = ['booktitle', 'picture', 'info', 'creator', 'release', 'available_copies', 'rented_by', 'status', "added_by"]
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
